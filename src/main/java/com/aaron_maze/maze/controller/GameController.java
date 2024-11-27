@@ -4,6 +4,7 @@ import com.aaron_maze.maze.dao.DoorDAO;
 import com.aaron_maze.maze.model.Door;
 import com.aaron_maze.maze.model.Maze;
 import com.aaron_maze.maze.model.Room;
+import com.aaron_maze.maze.services.DoorService;
 import com.aaron_maze.maze.services.MazeService;
 import com.aaron_maze.maze.services.RoomService;
 import jakarta.servlet.http.HttpSession;
@@ -28,7 +29,7 @@ public class GameController {
     @Autowired
     private RoomService roomService;
     @Autowired
-    private DoorDAO doorDAO;
+    private DoorService doorService;
 
     @GetMapping("/start")
     public String showStartPage(HttpSession session, Model model) {
@@ -78,14 +79,16 @@ public class GameController {
         if (currentRoomId == null) {
             //dependiendo del maze seleccionado el primer room sera uno u otro
 
-            if (selectedMazeId == 1){
+            if (selectedMazeId == 1) {
                 currentRoomId = 1;
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Invalid maze ID"));
             }
 
         }
 
         Room room = roomService.getRoomById(currentRoomId);
-        List<Door> doors = doorDAO.getDoorsByRoomId(currentRoomId);
+        List<Door> doors = doorService.getDoorsByRoomId(currentRoomId);
 
         Map<String, Object> response = new HashMap<>();
         response.put("room", room);
