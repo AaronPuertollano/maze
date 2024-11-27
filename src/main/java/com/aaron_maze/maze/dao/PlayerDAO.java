@@ -41,7 +41,7 @@ public class PlayerDAO {
             player.setIdPlayer(rs.getInt("id_player"));
             player.setName(rs.getString("name"));
             player.setPassword(rs.getString("password"));
-            player.setIdActualRoom(rs.getInt("id_actual_room"));
+            player.setcurrentRoom(rs.getInt("currentRoom"));
             return player;
         });
     }

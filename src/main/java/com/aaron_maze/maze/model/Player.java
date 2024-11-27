@@ -4,7 +4,7 @@ public class Player {
     int idPlayer;
     private String name;
     private String password;
-    int idActualRoom;
+    int currentRoom;
 
     public Player() {}
 
@@ -27,12 +27,12 @@ public class Player {
         this.password = password;
     }
 
-    public int getIdActualRoom() {
-        return idActualRoom;
+    public int getcurrentRoom() {
+        return currentRoom;
     }
 
-    public void setIdActualRoom(int idActualRoom) {
-        this.idActualRoom = idActualRoom;
+    public void setcurrentRoom(int currentRoom) {
+        this.currentRoom = currentRoom;
     }
 
     public int getIdPlayer() {

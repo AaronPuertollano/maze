@@ -72,9 +72,16 @@ public class GameController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
+        Integer selectedMazeId = (Integer) session.getAttribute("selectedMaze");
         Integer currentRoomId = (Integer) session.getAttribute("currentRoom");
+
         if (currentRoomId == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            //dependiendo del maze seleccionado el primer room sera uno u otro
+
+            if (selectedMazeId == 1){
+                currentRoomId = 1;
+            }
+
         }
 
         Room room = roomService.getRoomById(currentRoomId);
@@ -85,4 +92,6 @@ public class GameController {
         response.put("doors", doors);
         return ResponseEntity.ok(response);
     }
+
+
 }
