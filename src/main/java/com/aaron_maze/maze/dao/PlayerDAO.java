@@ -9,21 +9,9 @@ import java.util.Map;
 
 @Repository
 public class PlayerDAO {
-    private final Map<String, Player> players = new HashMap<>();
-
-    public boolean existsByName(String name) {
-        return players.containsKey(name);
-    }
-
-    public void save(Player player) {
-        players.put(player.getName(), player);
-    }
-
-    public Player findByName(String name) {
-        return players.get(name);
-    }
 
     private final JdbcTemplate jdbcTemplate;
+    private final Map<String, Player> players = new HashMap<>();
 
     public PlayerDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -44,5 +32,17 @@ public class PlayerDAO {
         String sql = "SELECT COUNT(*) FROM Player WHERE name = ? AND password = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, name, password);
         return count != null && count > 0;
+    }
+
+    public Player getPlayerByName(String name) {
+        String sql = "SELECT * FROM Player WHERE name = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{name}, (rs, rowNum) -> {
+            Player player = new Player();
+            player.setIdPlayer(rs.getInt("id_player"));
+            player.setName(rs.getString("name"));
+            player.setPassword(rs.getString("password"));
+            player.setIdActualRoom(rs.getInt("id_actual_room"));
+            return player;
+        });
     }
 }

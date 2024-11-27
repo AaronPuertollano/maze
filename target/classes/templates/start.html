@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Juego en Progreso</title>
+  <style>
+        canvas {
+            border: 2px solid black;
+            display: block;
+            margin: 20px auto;
+            background-color: rgb(179, 231, 181);
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="titulo">
+  <h1>Juego en Progreso</h1>
+  <p th:text="'Bienvenido, ' + ${user} + '! Actualmente estás en el Maze: ' + ${mazeName}"></p>
+</div>
+
+<div class="content">
+
+  <div class="info">
+
+    <h2>INFORMATION</h2>
+
+    <div class="data">
+
+      <p>Room:</p>
+      <p>Time:</p>
+      <p>Coins:</p>
+      <p>Keys A:</p>
+      <p>Keys B:</p>
+
+    </div>
+
+    <div class="speak">
+      <p>CUIDADO: MONEDAS INSUFUCUENTES!</p>
+    </div>
+
+    <div class="options">
+      <button type="button" id="restart">RESTART</button>
+      <button type="button" id="exit">EXIT</button>
+    </div>
+
+  </div>
+
+  <div class="game">
+    <canvas id="gameCanvas" width="550" height="450"></canvas>
+  </div>
+
+
+
+  <div class="control">
+
+    <div>
+      <button type="button" id="up">UP</button>
+    </div>
+    <div>
+      <button type="button" id="left">LEFT</button>
+      <button type="button" id="right">RIGHT</button>
+    </div>
+    <div>
+      <button type="button" id="down">DOWN</button>
+    </div>
+  </div>
+
+</div>
+
+
+<script>
+
+    // Función para cargar la habitación y las puertas desde el servidor
+    async function loadRoomData() {
+        try {
+            const response = await fetch('/room');
+            if (!response.ok) {
+                console.error("No se pudo cargar la habitación");
+                return;
+            }
+
+            const roomData = await response.json();
+            drawRoom(roomData);
+        } catch (error) {
+            console.error("Error al cargar los datos de la habitación:", error);
+        }
+    }
+
+    // Función para dibujar la habitación en el canvas
+    function drawRoom(roomData) {
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Limpiar el canvas antes de dibujar
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Dibujar la base de la habitación
+        ctx.fillStyle = "#dcdcdc"; // Color gris claro para la habitación
+        ctx.fillRect(50, 50, 400, 300); // Cuadro que representa la habitación
+
+        // Dibujar las puertas
+        roomData.doors.forEach(door => {
+            ctx.fillStyle = door.stateDoor ? "#008000" : "#ff0000"; // Verde si abierta, rojo si cerrada
+            switch (door.position) {
+                case "NORTH":
+                    ctx.fillRect(225, 40, 50, 10); // Puerta norte
+                    break;
+                case "SOUTH":
+                    ctx.fillRect(225, 370, 50, 10); // Puerta sur
+                    break;
+                case "EAST":
+                    ctx.fillRect(440, 175, 10, 50); // Puerta este
+                    break;
+                case "WEST":
+                    ctx.fillRect(40, 175, 10, 50); // Puerta oeste
+                    break;
+            }
+        });
+
+        // Si la habitación tiene una moneda, dibujarla en el centro
+        if (roomData.room.haveCoin) {
+            ctx.fillStyle = "#ffd700"; // Dorado para la moneda
+            ctx.beginPath();
+            ctx.arc(275, 225, 10, 0, 2 * Math.PI); // Dibujar moneda
+            ctx.fill();
+        }
+    }
+
+    // Cargar los datos de la habitación al cargar la página
+    window.onload = loadRoomData;
+
+    </script>
+</body>
+</html>

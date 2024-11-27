@@ -1,11 +1,12 @@
 package com.aaron_maze.maze.model;
 
+import java.time.LocalTime;
+
 public class Game {
-    /*
-     * Nombre de usuario
-     * Tiempo de juego
-     * Tipo de mapa
-     * */
+
     String nameGame;
-    String maze;
+    int idPalyer;
+    int idMaze;
+    LocalTime time;
+    int coins;
 }

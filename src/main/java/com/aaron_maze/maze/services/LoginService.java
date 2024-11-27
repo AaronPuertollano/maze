@@ -17,10 +17,10 @@ public class LoginService {
 
     public boolean registerPlayer(String name, String password) {
         if (playerDAO.isPlayerExists(name)) {
-            return false; // Usuario ya existe
+            return false;
         }
         playerDAO.registerPlayer(name, password);
-        return true; // Registro exitoso
+        return true;
     }
 
     public boolean validateLogin(String name, String password) {
