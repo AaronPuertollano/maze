@@ -15,10 +15,9 @@ public class DoorDAO {
 
     public List<Door> getDoorsByRoomId(int roomId) {
         String sql = """
-                SELECT d.*
-                FROM Door d
-                JOIN Room r ON d.id_room = r.id_room
-                WHERE r.id_maze = ?""";
+            SELECT d.*
+            FROM Door d
+            WHERE d.id_room = ?""";
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             Door door = new Door();
             door.setIdDoor(rs.getInt("id_door"));

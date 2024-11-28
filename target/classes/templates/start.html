@@ -184,20 +184,18 @@
     function drawRoom(roomData) {
 
       const currentRoomId = roomData.room.idRoom;
-      const doorsInCurrentRoom = roomData.doors.filter(door => door.idRoom === currentRoomId);
-        doors = doorsInCurrentRoom;
-        console.log(doors);
+      const doorsInCurrentRoom = roomData.doors;
+      doors = doorsInCurrentRoom;
 
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-          ctx.fillStyle = "black";
-          ctx.fillRect(0, 0, 40, 550);
-          ctx.fillRect(0, 0, 550, 40);
-          ctx.fillRect(510, 0, 40, 550);
-          ctx.fillRect(0, 410, 550, 40);
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, 40, 550);
+      ctx.fillRect(0, 0, 550, 40);
+      ctx.fillRect(510, 0, 40, 550);
+      ctx.fillRect(0, 410, 550, 40);
 
           doorsInCurrentRoom.forEach(door => {
-            console.log(door);
                 ctx.fillStyle = door.stateDoor ? "#008000" : "#ff0000";
                 switch (door.position) {
                     case "NORTH":

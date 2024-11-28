@@ -82,7 +82,6 @@ public class GameController {
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Invalid maze ID"));
             }
-
         }
 
         Room room = roomService.getRoomById(currentRoomId);
