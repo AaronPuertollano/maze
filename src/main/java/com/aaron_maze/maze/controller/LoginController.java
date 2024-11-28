@@ -54,6 +54,7 @@ public class LoginController {
     public String processLogin(@RequestParam String name, @RequestParam String password, HttpSession session, Model model) {
         // Valida las credenciales
 
+        //estas cosas lo tienen que hacer el service
         if (name == null || name.trim().isEmpty() || password == null || password.trim().isEmpty()) {
             model.addAttribute("error", "Los campos no pueden estar vacíos.");
             return "login";

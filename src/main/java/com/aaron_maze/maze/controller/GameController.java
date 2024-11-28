@@ -21,11 +21,10 @@ import java.util.Map;
 
 @Controller
 public class GameController {
-    //EL USUARIO TIENE QUE COMUNICAR CON EL SERVIDOR CADA VEZ QUE ITERACTUE CON UNA PUERTA U OBJETO, EL OBJETO SE DEBE COMPROBAR
+    //EL USUARIO TIENE QUE COMUNICAR CON EL SERVIDOR CADA VEZ QUE INTERACTUE CON UNA PUERTA U OBJETO, EL OBJETO SE DEBE COMPROBAR
     //EN EL SERVIDOR ANTES DE OBTENERLO, ES MEDIANTE JSON!
     @Autowired
     private MazeService mazeService;
-
     @Autowired
     private RoomService roomService;
     @Autowired
@@ -95,6 +94,11 @@ public class GameController {
         response.put("doors", doors);
         return ResponseEntity.ok(response);
     }
+
+    /*
+    @GetMapping("/nav")
+
+    */
 
 
 }

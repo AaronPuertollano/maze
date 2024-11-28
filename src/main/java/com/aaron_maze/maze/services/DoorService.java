@@ -12,7 +12,7 @@ public class DoorService {
 
     @Autowired
     DoorDAO doorDAO;
-
+//puede pasarse a roomService para globalizarlo mas
     public List<Door> getDoorsByRoomId(int mazeId) {
         return doorDAO.getDoorsByRoomId(mazeId);
     }

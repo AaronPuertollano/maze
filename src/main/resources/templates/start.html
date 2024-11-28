@@ -217,7 +217,8 @@
 
     }
 
-     function drawPlayer() {
+
+    function drawPlayer() {
         ctx.beginPath();
         ctx.arc(playerX, playerY, playerRadius, 0, 2 * Math.PI);
         ctx.fillStyle = "blue";
@@ -227,27 +228,34 @@
         ctx.stroke();
     }
 
+
+    function clearPlayer() {
+        ctx.clearRect(playerX - playerRadius - 2, playerY - playerRadius - 2,
+                      playerRadius * 2 + 4, playerRadius * 2 + 4);
+    }
+
+    // Mover al jugador
     function movePlayer(direction) {
-        const step = 10; // Distancia que se moverá en cada paso
+        clearPlayer(); // Borrar al jugador antes de moverlo
+
+        const step = 52; // Distancia de movimiento
 
         switch (direction) {
             case "UP":
-                if (playerY - playerRadius > 40) playerY -= step;
+                if (playerY - playerRadius > 55) playerY -= step;
                 break;
             case "DOWN":
-                if (playerY + playerRadius < 410) playerY += step;
+                if (playerY + playerRadius < 350) playerY += step;
                 break;
             case "LEFT":
-                if (playerX - playerRadius > 40) playerX -= step;
+                if (playerX - playerRadius > 52) playerX -= step;
                 break;
             case "RIGHT":
-                if (playerX + playerRadius < 510) playerX += step; 
+                if (playerX + playerRadius < 478) playerX += step;
                 break;
         }
 
-        // Redibujar la habitación y el jugador en la nueva posición
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        loadRoomData();
+        drawPlayer(); // Redibujar al jugador en la nueva posición
     }
 
     window.onload = loadRoomData;
