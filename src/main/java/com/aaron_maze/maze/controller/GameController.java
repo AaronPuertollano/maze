@@ -1,10 +1,8 @@
 package com.aaron_maze.maze.controller;
 
-import com.aaron_maze.maze.dao.DoorDAO;
 import com.aaron_maze.maze.model.Door;
 import com.aaron_maze.maze.model.Maze;
 import com.aaron_maze.maze.model.Room;
-import com.aaron_maze.maze.services.DoorService;
 import com.aaron_maze.maze.services.MazeService;
 import com.aaron_maze.maze.services.RoomService;
 import jakarta.servlet.http.HttpSession;
@@ -14,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,12 +22,12 @@ import java.util.Map;
 public class GameController {
     //EL USUARIO TIENE QUE COMUNICAR CON EL SERVIDOR CADA VEZ QUE INTERACTUE CON UNA PUERTA U OBJETO, EL OBJETO SE DEBE COMPROBAR
     //EN EL SERVIDOR ANTES DE OBTENERLO, ES MEDIANTE JSON!
+    //PARA GUARDAR EL TIEMPO DE PARTIDO LO CORRECTO SERIA GUARDAR LA HORA DE INICIO DE PARTIDA Y LA HORA DE FINAL
+    //Y DESPUES HACER LOS CALCULOS
     @Autowired
     private MazeService mazeService;
     @Autowired
     private RoomService roomService;
-    @Autowired
-    private DoorService doorService;
 
     @GetMapping("/start")
     public String showStartPage(HttpSession session, Model model) {
@@ -87,7 +86,7 @@ public class GameController {
         }
 
         Room room = roomService.getRoomById(currentRoomId);
-        List<Door> doors = doorService.getDoorsByRoomId(currentRoomId);
+        List<Door> doors = roomService.getDoorsByRoomId(currentRoomId);
 
         Map<String, Object> response = new HashMap<>();
         response.put("room", room);
@@ -95,10 +94,36 @@ public class GameController {
         return ResponseEntity.ok(response);
     }
 
-    /*
-    @GetMapping("/nav")
+    @GetMapping("/open")
+    public ResponseEntity<Map<String, Object>> openDoor(
 
-    */
+            @RequestParam("idDoor") Integer idDoor, HttpSession session) {
+
+        String user = (String) session.getAttribute("user");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        // Busca la puerta por ID
+        Door door = roomService.getDoorById(idDoor);
+        if (door == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "La puerta no existe"));
+        }
+
+        boolean canOpen = door.isStateDoor();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("canOpen", canOpen);
+
+        if (canOpen) {
+            session.setAttribute("currentRoom", door.getIdNextRoom());
+            response.put("nextRoom", door.getIdNextRoom());
+        } else {
+            response.put("message", "La puerta está cerrada");
+        }
+
+        return ResponseEntity.ok(response);
+    }
 
 
 }

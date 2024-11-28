@@ -86,7 +86,7 @@ public class LoginController {
         if (mazes != null) {
             model.addAttribute("mazes", mazes);
         } else {
-            model.addAttribute("mazes", new ArrayList<>()); // Manejo en caso de que sea null
+            model.addAttribute("mazes", new ArrayList<>());
         }
 
         return "menu";

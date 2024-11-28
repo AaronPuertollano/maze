@@ -161,6 +161,7 @@
     let playerX = 275;
     let playerY = 220;
     const playerRadius = 25;
+    let doors = [];
 
     async function loadRoomData() {
         try {
@@ -170,6 +171,7 @@
                 return;
             }
             const roomData = await response.json();
+            console.log(roomData);
             drawRoom(roomData);
         } catch (error) {
             console.error("Error al cargar los datos de la habitación:", error);
@@ -183,6 +185,8 @@
 
       const currentRoomId = roomData.room.idRoom;
       const doorsInCurrentRoom = roomData.doors.filter(door => door.idRoom === currentRoomId);
+        doors = doorsInCurrentRoom;
+        console.log(doors);
 
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -191,8 +195,6 @@
           ctx.fillRect(0, 0, 550, 40);
           ctx.fillRect(510, 0, 40, 550);
           ctx.fillRect(0, 410, 550, 40);
-
-          console.log(roomData);
 
           doorsInCurrentRoom.forEach(door => {
             console.log(door);
@@ -213,10 +215,12 @@
                 }
             });
 
+      playerX = 275;
+      playerY = 220;
+
       drawPlayer();
 
     }
-
 
     function drawPlayer() {
         ctx.beginPath();
@@ -228,7 +232,6 @@
         ctx.stroke();
     }
 
-
     function clearPlayer() {
         ctx.clearRect(playerX - playerRadius - 2, playerY - playerRadius - 2,
                       playerRadius * 2 + 4, playerRadius * 2 + 4);
@@ -236,7 +239,7 @@
 
     // Mover al jugador
     function movePlayer(direction) {
-        clearPlayer(); // Borrar al jugador antes de moverlo
+        clearPlayer();
 
         const step = 52; // Distancia de movimiento
 
@@ -255,7 +258,54 @@
                 break;
         }
 
-        drawPlayer(); // Redibujar al jugador en la nueva posición
+        const door = checkDoorCollision(playerX, playerY);
+        if (door) {
+            console.log("Intentando abrir puerta...");
+            checkDoorAndChangeRoom(door); // Verificar estado de la puerta y cambiar de sala si procede
+            return;
+        }
+
+        clearPlayer();
+        drawPlayer();
+    }
+
+    function checkDoorCollision(newX, newY) {
+        for (let door of doors) {
+            switch (door.position) {
+                case "NORTH":
+                    if (newY - playerRadius <= 55 && newX >= 215 && newX <= 335) return door;
+                    break;
+                case "SOUTH":
+                    if (newY + playerRadius >= 395 && newX >= 215 && newX <= 335) return door;
+                    break;
+                case "EAST":
+                    if (newX + playerRadius >= 495 && newY >= 165 && newY <= 285) return door;
+                    break;
+                case "WEST":
+                    if (newX - playerRadius <= 55 && newY >= 165 && newY <= 285) return door;
+                    break;
+            }
+        }
+        return null; // No colisión
+    }
+
+    async function checkDoorAndChangeRoom(door) {
+        try {
+            const response = await fetch(`/open?idDoor=${door.idDoor}`, { method: 'GET' });
+            if (!response.ok) {
+                console.error("Error al comprobar el estado de la puerta");
+                return;
+            }
+            const data = await response.json();
+            if (data.canOpen) {
+                console.log("Puerta abierta. Cambiando a la sala:", door.idNextRoom);
+                loadRoomData();
+            } else {
+                console.log("La puerta está cerrada.");
+            }
+        } catch (error) {
+            console.error("Error al intentar abrir la puerta:", error);
+        }
     }
 
     window.onload = loadRoomData;
