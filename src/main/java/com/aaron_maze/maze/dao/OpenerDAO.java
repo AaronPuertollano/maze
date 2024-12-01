@@ -12,18 +12,17 @@ public class OpenerDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<Opener> getOpenersByRoomId(int mazeId) {
+    public List<Opener> getOpenersByRoomId(int roomId) {
         String sql = """
-                SELECT o.*
-                FROM Opener o
-                JOIN Room r ON o.id_room = r.id_room
-                WHERE r.id_maze = ?""";
+                SELECT d.*
+                FROM Opener d
+                WHERE d.id_room = ?""";
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             Opener opener = new Opener();
             opener.setIdOpener(rs.getInt("id_opener"));
             opener.setIdRoom(rs.getInt("id_room"));
             opener.setCost(rs.getInt("cost"));
             return opener;
-        }, mazeId);
+        }, roomId);
     }
 }
