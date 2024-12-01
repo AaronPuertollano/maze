@@ -108,8 +108,8 @@
 
     <div class="data">
 
-      <p>Room:</p>
-      <p>Time:</p>
+      <p>Room: <span id="roomId"></span></p>
+      <p>Time: <span id="timer">00:00</span></p>
       <p>Coins:</p>
       <p>Keys A:</p>
       <p>Keys B:</p>
@@ -117,7 +117,7 @@
     </div>
 
     <div class="speak">
-      <p>CUIDADO: MONEDAS INSUFUCUENTES!</p>
+      <p id="message">Bienvenido al laberinto!</p>
     </div>
 
     <div class="options">
@@ -172,6 +172,7 @@
             }
             const roomData = await response.json();
             console.log(roomData);
+            document.getElementById('roomId').textContent = roomData.room.idRoom;
             drawRoom(roomData);
         } catch (error) {
             console.error("Error al cargar los datos de la habitación:", error);
@@ -188,7 +189,6 @@
       doors = doorsInCurrentRoom;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       ctx.fillStyle = "black";
       ctx.fillRect(0, 0, 40, 550);
       ctx.fillRect(0, 0, 550, 40);
@@ -231,8 +231,7 @@
     }
 
     function clearPlayer() {
-        ctx.clearRect(playerX - playerRadius - 2, playerY - playerRadius - 2,
-                      playerRadius * 2 + 4, playerRadius * 2 + 4);
+        ctx.clearRect(playerX - playerRadius - 2, playerY - playerRadius - 2, playerRadius * 2 + 4, playerRadius * 2 + 4);
     }
 
     // Mover al jugador
@@ -258,7 +257,6 @@
 
         const door = checkDoorCollision(playerX, playerY);
         if (door) {
-            console.log("Intentando abrir puerta...");
             checkDoorAndChangeRoom(door); // Verificar estado de la puerta y cambiar de sala si procede
             return;
         }
@@ -296,18 +294,61 @@
             }
             const data = await response.json();
             if (data.canOpen) {
-                console.log("Puerta abierta. Cambiando a la sala:", door.idNextRoom);
+                updateMessage(`Has pasado a la sala ${door.idNextRoom}.`);
                 loadRoomData();
             } else {
-                console.log("La puerta está cerrada.");
+                updateMessage("No puedes pasar. La puerta está cerrada.");
+                playerX = 275;
+                playerY = 220;
+                drawPlayer();
             }
         } catch (error) {
             console.error("Error al intentar abrir la puerta:", error);
+            updateMessage("Ocurrió un error al intentar abrir la puerta.");
         }
     }
 
-    window.onload = loadRoomData;
+    window.onload = () => {
+      loadRoomData();
+      startTimer(); // Inicia el temporizador al cargar por primera vez
+    };
 
-    </script>
+    //funciones para el tiempo (cliente)
+
+    let timerInterval;
+    let totalSeconds = 0;
+
+  function startTimer() {
+      const timerElement = document.getElementById('timer');
+
+      timerInterval = setInterval(() => {
+          totalSeconds++;
+
+          const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+          const seconds = String(totalSeconds % 60).padStart(2, '0');
+
+          timerElement.textContent = `${minutes}:${seconds}`;
+      }, 1000);
+  }
+
+  // Reinicia el temporizador
+  function resetTimer() {
+      totalSeconds = 0;
+      if (timerInterval) clearInterval(timerInterval); // Detiene el temporizador anterior
+      startTimer(); // Inicia un nuevo temporizador
+  }
+
+  function updateMessage(newMessage) {
+    const messageElement = document.getElementById('message');
+    messageElement.textContent = newMessage;
+
+    // Opcional: Resalta el mensaje temporalmente
+    messageElement.style.color = "red";
+    setTimeout(() => {
+        messageElement.style.color = ""; // Vuelve al color original después de 2 segundos
+    }, 2000);
+}
+
+  </script>
 </body>
 </html>

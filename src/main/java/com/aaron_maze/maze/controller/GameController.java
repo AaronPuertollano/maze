@@ -2,6 +2,7 @@ package com.aaron_maze.maze.controller;
 
 import com.aaron_maze.maze.model.Door;
 import com.aaron_maze.maze.model.Maze;
+import com.aaron_maze.maze.model.Opener;
 import com.aaron_maze.maze.model.Room;
 import com.aaron_maze.maze.services.MazeService;
 import com.aaron_maze.maze.services.RoomService;
@@ -37,7 +38,6 @@ public class GameController {
             return "redirect:/login";
         }
         model.addAttribute("user", user);
-
         return "start";
     }
 
@@ -86,10 +86,12 @@ public class GameController {
 
         Room room = roomService.getRoomById(currentRoomId);
         List<Door> doors = roomService.getDoorsByRoomId(currentRoomId);
+        List<Opener> openers = roomService.getOpenerByRoomId(currentRoomId);
 
         Map<String, Object> response = new HashMap<>();
         response.put("room", room);
         response.put("doors", doors);
+        response.put("openers", openers);
         return ResponseEntity.ok(response);
     }
 
@@ -120,7 +122,6 @@ public class GameController {
         } else {
             response.put("message", "La puerta está cerrada");
         }
-
         return ResponseEntity.ok(response);
     }
 
