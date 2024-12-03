@@ -304,7 +304,7 @@
     }
 
     function checkOpenerAndCatch(opener){
-      updateMessage(`Has interactuado con una llave`);
+      updateMessage(`Has interactuado con la llave ${opener.idOpener}, es necessario ${opener.cost} monedas`);
       playerX = 275;
       playerY = 220;
       drawPlayer();
@@ -343,7 +343,7 @@
                 updateMessage(`Has pasado a la sala ${door.idNextRoom}.`);
                 loadRoomData();
             } else {
-                updateMessage("No puedes pasar. La puerta está cerrada.");
+                updateMessage(`No puedes pasar. Necessitas la llave ${door.idOpener}.`);
                 playerX = 275;
                 playerY = 220;
                 drawPlayer();
