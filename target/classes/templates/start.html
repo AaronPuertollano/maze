@@ -162,6 +162,7 @@
     let playerY = 220;
     const playerRadius = 25;
     let doors = [];
+    let openers = [];
 
     async function loadRoomData() {
         try {
@@ -189,7 +190,8 @@
       doors = doorsInCurrentRoom;
 
       const openersInRoom = roomData.openers;
-      console.log(openersInRoom);
+      openers = openersInRoom;
+      console.log(openers);
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "black";
@@ -219,9 +221,6 @@
             //pintamos la llave
             openersInRoom.forEach(opener => {
 
-              const num = Math.random()*10;
-
-              if (num > 5){
                   // zona izquierda
                   ctx.fillStyle = "grey";
                   ctx.fillRect(98, 90, 15, 50);
@@ -229,17 +228,8 @@
                   ctx.fillRect(112, 115, 15, 8);
                   ctx.fillStyle = "black";
                   ctx.fillRect(90, 70, 30, 30);
-              } else {
-                  // zona derecha
-                  ctx.fillStyle = "grey";
-                  ctx.fillRect(398, 90, 15, 50);
-                  ctx.fillRect(412, 130, 15, 8);
-                  ctx.fillRect(412, 115, 15, 8);
-                  ctx.fillStyle = "black";
-                  ctx.fillRect(390, 70, 30, 30);
-              }
 
-            })
+            });
 
       playerX = 275;
       playerY = 220;
@@ -264,8 +254,8 @@
 
     // Mover al jugador
     function movePlayer(direction) {
-        clearPlayer();
 
+        clearPlayer();
         const step = 52; // Distancia de movimiento
 
         switch (direction) {
@@ -289,10 +279,38 @@
             return;
         }
 
-        clearPlayer();
+        const opener = checkOpenerCollision(playerX, playerY);
+        if (opener) {
+            checkOpenerAndCatch(opener); // Si puede cojerlo se lo guarda en su inventario
+            return;
+        }
+
         drawPlayer();
     }
 
+    //llaves
+
+    function checkOpenerCollision(newX, newY){
+
+        for (let opener of openers) {
+                // Verificar colisión
+            const inLeftZone = playerX >= 98 && playerX <= 128 && playerY >= 70 && playerY <= 140;
+
+            if (inLeftZone) {
+                return opener; // Retorna la llave
+            }
+        }
+        return null; // No colisión
+    }
+
+    function checkOpenerAndCatch(opener){
+      updateMessage(`Has interactuado con una llave`);
+      playerX = 275;
+      playerY = 220;
+      drawPlayer();
+    }
+
+  //puertas
     function checkDoorCollision(newX, newY) {
         for (let door of doors) {
             switch (door.position) {
@@ -362,7 +380,7 @@
   // Reinicia el temporizador
   function resetTimer() {
       totalSeconds = 0;
-      if (timerInterval) clearInterval(timerInterval); // Detiene el temporizador anterior
+      if (timerInterval) clearInterval(timerInterval);
       startTimer(); // Inicia un nuevo temporizador
   }
 
@@ -370,7 +388,7 @@
     const messageElement = document.getElementById('message');
     messageElement.textContent = newMessage;
 
-    // Opcional: Resalta el mensaje temporalmente
+    // Resalta el mensaje
     messageElement.style.color = "red";
     setTimeout(() => {
         messageElement.style.color = ""; // Vuelve al color original después de 2 segundos
