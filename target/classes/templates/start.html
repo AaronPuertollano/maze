@@ -188,6 +188,9 @@
       const doorsInCurrentRoom = roomData.doors;
       doors = doorsInCurrentRoom;
 
+      const openersInRoom = roomData.openers;
+      console.log(openersInRoom);
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "black";
       ctx.fillRect(0, 0, 40, 550);
@@ -212,6 +215,31 @@
                         break;
                 }
             });
+
+            //pintamos la llave
+            openersInRoom.forEach(opener => {
+
+              const num = Math.random()*10;
+
+              if (num > 5){
+                  // zona izquierda
+                  ctx.fillStyle = "grey";
+                  ctx.fillRect(98, 90, 15, 50);
+                  ctx.fillRect(112, 130, 15, 8);
+                  ctx.fillRect(112, 115, 15, 8);
+                  ctx.fillStyle = "black";
+                  ctx.fillRect(90, 70, 30, 30);
+              } else {
+                  // zona derecha
+                  ctx.fillStyle = "grey";
+                  ctx.fillRect(398, 90, 15, 50);
+                  ctx.fillRect(412, 130, 15, 8);
+                  ctx.fillRect(412, 115, 15, 8);
+                  ctx.fillStyle = "black";
+                  ctx.fillRect(390, 70, 30, 30);
+              }
+
+            })
 
       playerX = 275;
       playerY = 220;
