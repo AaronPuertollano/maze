@@ -111,8 +111,10 @@
       <p>Room: <span id="roomId"></span></p>
       <p>Time: <span id="timer">00:00</span></p>
       <p>Coins:</p>
-      <p>Keys A:</p>
-      <p>Keys B:</p>
+      <p>Inventario:</p>
+      <div id="inventory">
+        <ul id="inventoryList"></ul>
+      </div>
 
     </div>
 
@@ -163,6 +165,7 @@
     const playerRadius = 25;
     let doors = [];
     let openers = [];
+    let inventory = [];
 
     async function loadRoomData() {
         try {
@@ -220,7 +223,7 @@
 
             //pintamos la llave
             openersInRoom.forEach(opener => {
-
+                if (!inventory.includes(opener.idOpener)) {
                   // zona izquierda
                   ctx.fillStyle = "grey";
                   ctx.fillRect(98, 90, 15, 50);
@@ -228,7 +231,7 @@
                   ctx.fillRect(112, 115, 15, 8);
                   ctx.fillStyle = "black";
                   ctx.fillRect(90, 70, 30, 30);
-
+                }
             });
 
       playerX = 275;
@@ -304,10 +307,19 @@
     }
 
     function checkOpenerAndCatch(opener){
-      updateMessage(`Has interactuado con la llave ${opener.idOpener}, es necessario ${opener.cost} monedas`);
-      playerX = 275;
-      playerY = 220;
-      drawPlayer();
+        if (!inventory.includes(opener.idOpener)) {
+          inventory.push(opener.idOpener); // Agrega la llave al inventario
+          updateMessage(`Has recogido la llave ${opener.idOpener}, costo: ${opener.cost} monedas.`);
+
+          // Elimina la llave de la lista de llaves en la sala
+          openers = openers.filter(o => o.idOpener !== opener.idOpener);
+          updateInventoryDisplay();
+          playerX = 275;
+          playerY = 220;
+          drawPlayer();
+      } else {
+          updateMessage("¡Ya has recogido esta llave!");
+      }
     }
 
   //puertas
@@ -356,6 +368,7 @@
 
     window.onload = () => {
       loadRoomData();
+      updateInventoryDisplay();
       startTimer(); // Inicia el temporizador al cargar por primera vez
     };
 
@@ -393,6 +406,18 @@
     setTimeout(() => {
         messageElement.style.color = ""; // Vuelve al color original después de 2 segundos
     }, 2000);
+}
+
+function updateInventoryDisplay() {
+    const inventoryList = document.getElementById('inventoryList');
+    inventoryList.innerHTML = ""; // Limpia la lista actual
+
+    // Añade cada elemento del inventario a la lista
+    inventory.forEach(item => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `Llave ${item}`; // Puedes personalizar la descripción
+        inventoryList.appendChild(listItem);
+    });
 }
 
   </script>
