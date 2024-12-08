@@ -38,4 +38,5 @@ public class RoomService {
     public Door getDoorById(int idDoor){
         return doorDAO.getDoorById(idDoor);
     }
+    public void updateDoor(Door door) { doorDAO.updateDoor(door); }
 }

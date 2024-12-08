@@ -98,8 +98,9 @@ public class GameController {
     @GetMapping("/open")
     public ResponseEntity<Map<String, Object>> openDoor(
 
-            @RequestParam("idDoor") Integer idDoor, HttpSession session) {
+            @RequestParam("idDoor") Integer idDoor, @RequestParam("inventory") String inventoryString, HttpSession session) {
 
+        System.out.println(inventoryString);
         String user = (String) session.getAttribute("user");
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);

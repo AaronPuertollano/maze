@@ -204,6 +204,10 @@
       ctx.fillRect(0, 410, 550, 40);
 
           doorsInCurrentRoom.forEach(door => {
+              if (!door.stateDoor && inventory.includes(door.idOpener)) {
+                  door.stateDoor = true; // Cambia el estado de la puerta a abierta
+               }
+
                 ctx.fillStyle = door.stateDoor ? "#008000" : "#ff0000";
                 switch (door.position) {
                     case "NORTH":
@@ -344,8 +348,14 @@
     }
 
     async function checkDoorAndChangeRoom(door) {
+
+        if (!door.stateDoor && inventory.includes(door.idOpener)) {
+            door.stateDoor = true; // Abre la puerta localmente
+        }
+
         try {
-            const response = await fetch(`/open?idDoor=${door.idDoor}`, { method: 'GET' });
+            const inventoryString = encodeURIComponent(JSON.stringify(inventory));
+            const response = await fetch(`/open?idDoor=${door.idDoor}&inventory=${inventoryString}`, { method: 'GET' });
             if (!response.ok) {
                 console.error("Error al comprobar el estado de la puerta");
                 return;

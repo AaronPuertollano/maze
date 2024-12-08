@@ -46,4 +46,18 @@ public class DoorDAO {
             return door;
         }, idDoor);
     }
+
+    public int updateDoor(Door door) {
+        String sql = """
+            UPDATE Door
+            SET state_door = ?, id_next_room = ?, id_opener = ?, position = ?
+            WHERE id_door = ?""";
+        return jdbcTemplate.update(sql,
+                door.isStateDoor(),
+                door.getIdNextRoom(),
+                door.getIdOpener(),
+                door.getPosition().toString(),
+                door.getIdDoor()
+        );
+    }
 }
